@@ -54,12 +54,18 @@ WHERE f.`length` > (SELECT AVG(`length`) FROM film)
 
 ## Ответ
 ```
-SELECT MONTH(payment_date), SUM(p.amount), COUNT(p.rental_id) 
+SELECT DATE_FORMAT(p.payment_date, '%M, %Y') as month_year, SUM(p.amount) as sum_amount, COUNT(p.payment_id) as count_sales 
 FROM payment p
-GROUP BY MONTH(payment_date)
-ORDER BY SUM(p.amount ) DESC
+WHERE DATE_FORMAT(p.payment_date, '%M, %Y') IN (
+    SELECT DATE_FORMAT(p2.payment_date, '%M, %Y')
+    FROM payment p2
+    GROUP BY DATE_FORMAT(p2.payment_date, '%M, %Y')
+)
+GROUP BY DATE_FORMAT(p.payment_date, '%M, %Y')
+ORDER BY SUM(p.amount) DESC
 LIMIT 1;
 ```
+
 
 ## Дополнительные задания (со звёздочкой*)
 Эти задания дополнительные, то есть не обязательные к выполнению, и никак не повлияют на получение вами зачёта по этому домашнему заданию. Вы можете их выполнить, если хотите глубже шире разобраться в материале.
